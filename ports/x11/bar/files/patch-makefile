@@ -1,0 +1,17 @@
+--- Makefile
++++ Makefile
+@@ -32,11 +32,11 @@
+ 	rm -f ./${EXEC}
+ 
+ install: bar doc
+-	install -D -m 755 bar ${DESTDIR}${BINDIR}/bar
+-	install -D -m 644 bar.1 ${DESTDIR}${PREFIX}/share/man/man1/bar.1
++	install -Dd -m 755 bar ${DESTDIR}${BINDIR}/bar
++	install -Dd -m 644 bar.1 ${DESTDIR}${PREFIX}/man/man1/bar.1
+ 
+ uninstall:
+ 	rm -f ${DESTDIR}${BINDIR}/bar
+-	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/bar.1
++	rm -f $(DESTDIR)$(PREFIX)/man/man1/bar.1
+ 
+ .PHONY: all debug clean install

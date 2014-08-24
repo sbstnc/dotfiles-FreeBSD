@@ -1,0 +1,4 @@
+bin/bspc
+bin/bspwm
+man/man1/bspc.1.gz
+man/man1/bspwm.1.gz

@@ -1,0 +1,4 @@
+[localrules=10]
+add path 'da*' mode 0660 group wheel
+add path 'md*' mode 0660 group wheel
+add path 'ada*' mode 0660 group wheel 

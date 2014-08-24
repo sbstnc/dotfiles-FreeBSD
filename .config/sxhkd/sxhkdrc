@@ -1,0 +1,122 @@
+#
+# bspwm hotkeys
+#
+
+# Quit bspwm session
+alt + super + Escape
+	{bspc query -T > "$BSPWM_TREE"; bpsc query -H > "$BSPWM_HISTORY"; bspc quit}
+
+# Toggle panels
+alt + super + q
+	{pkill panel; pkill cat; pkill conky; bspc config top_padding 0,\
+	bspc config top_padding 14; $HOME/.config/bspwm/panel/panel & }
+
+# Close window
+alt + w
+	bspc window -c
+
+# Toggle monocle mode
+alt + m
+	bspc desktop -l next
+
+# Balance tree
+alt + b
+	bspc desktop -B
+
+# Toggle tile
+alt + {_,shift +}f
+	bspc window -t {floating,fullscreen}
+
+# Switch to last desktop
+alt + {grave,Tab}
+	bspc {window,desktop} -f last
+
+# Move window to last position
+alt + period
+	bspc window -s last
+
+# Move window to master area
+alt + comma
+	bspc window -s biggest
+
+# Select windows, or move
+alt + {_,shift + }{h,j,k,l}
+	bspc window -{f,s} {left,down,up,right} || bspc window -f {prev, prev, next, next}
+
+# Focus next, previous window
+alt + {_,shift + }c
+	bspc window -f {next,prev}
+
+# Previous, next desktop
+alt + bracket{left,right}
+	bspc desktop -f {prev,next}
+
+# Preselect splitting area of the current window
+alt + ctrl + {h,j,k,l}
+	bspc window -p {left,down,up,right}
+
+# Cancel presel of current window or desktop
+alt + ctrl + {_,shift + }space
+	bspc {window -p cancel,desktop -c}
+
+# Resize nodes
+super + {a,f}
+    S={+,-}; \
+    bspc window -e left $\{S\}20 || \
+    bspc window -e right $\{S\}20
+super + {s,d}
+    S={+,-}; \
+    bspc window -e down $\{S\}20 || \
+    bspc window -e up $\{S\}20
+
+# Set splitting ratio of current window
+alt + ctrl + {1-9}
+	bspc window -r 0.{1-9}
+
+# Switch to desktop
+alt + {_,shift + }{1-9,0}
+	bspc {desktop -f,window -d} ^{1-9,10}
+
+# Focus window
+~button1
+	bspc pointer -g focus
+
+# Move window
+alt + button1
+	bspc pointer -g move
+
+alt + !button1
+	bspc pointer -t %i %i
+
+alt + @button1
+	bspc pointer -u
+
+# Resize window horizontally or freely
+alt + {_,shift + }button3
+	bspc pointer -g {resize_side,resize_corner}
+
+alt + {_,shift + }!button3
+	bspc pointer -t %i %i
+
+alt + {_,shift + }@button3
+	bspc pointer -u
+
+#
+# wm independent hotkeys
+#
+
+alt + Return
+	urxvt
+
+alt + space
+	dmenu_run
+
+XF86MonBrightnessUp
+	/home/sbstnc/scripts/brightness_change up
+
+XF86MonBrightnessDown
+	/home/sbstnc/scripts/brightness_change down
+
+# make sxhkd reload its configuration files:
+alt + Escape
+	pkill -USR1 -x sxhkd

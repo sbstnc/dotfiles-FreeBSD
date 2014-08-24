@@ -1,0 +1,61 @@
+#! /bin/sh
+
+FONT1="-misc-stlarch-medium-r-normal--10-100-75-75-c-80-iso10646-1"
+FONT2="-artwiz-cure-medium-r-normal--11-110-75-75-p-90-iso8859-1"
+BACKGROUND="#f0171a1f"
+FOREGROUND="#ff839496"
+LINEHEIGHT="0"
+EDGE_GAP=0
+HEIGHT=14
+WIDTH=$((`bspc query -T | head -n1 | cut -d" " -f2 | cut -d"x" -f1` - ($EDGE_GAP * 2)))
+GEOMETRY="${WIDTH}x$HEIGHT+$EDGE_GAP+$EDGE_GAP"
+MONITOR="$(bspc query -M | tail -n1)"
+
+cd $(dirname $0)
+
+if [ $(pgrep -cx panel) -gt 1 ] ; then
+    printf "%s\n" "The panel is already running." >&2
+    exit 1
+fi
+
+trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
+
+flavor=${1:-bar}
+
+bspc control --subscribe > "$PANEL_FIFO" &
+#xtitle -sf 'T%s' > "$PANEL_FIFO" &
+#clock -sf 'S%a %H:%M' > "$PANEL_FIFO" &
+#echo "T" >  "$PANEL_FIFO" &
+#conky -c ./panel_conky > "$PANEL_FIFO" &
+# easter eggs
+sep_m="%{F#ffac6a76}  %{F-}"
+sep_v="%{F#ffac6a76}  %{F-}"
+sep_d="%{F#ffac6a76}  %{F-}"
+sep_c="%{F#ffac6a76}  %{F-}"
+
+while true; do
+    echo "T" > "$PANEL_FIFO"
+
+    date_min="$(date +'%H:%M')"
+    vol="$(mixer pcm | tail -1 | sed -E 's/[A-Za-z ]*([0-9]*).*/\1/')%%"
+
+    if [ -z "$nowplaying" ] ; then
+        nowplaying="nanimo"
+    fi
+
+    echo "S" "$sep_m%{F#ffedeff2} $nowplaying $sep_v%{F#ffedeff2} $vol $sep_d%{F#ffedeff2} $date_min %{F-}" > "$PANEL_FIFO"
+
+    sleep 1
+done &
+
+case "$flavor" in
+    bar)
+        cat "$PANEL_FIFO" | ./panel_bar | bar -f "$FONT1","$FONT2" -F "$FOREGROUND" -B "$BACKGROUND" -g "$GEOMETRY" -u $LINEHEIGHT
+        ;;
+    dzen2)
+        PANEL_HEIGHT=24
+        FONT_FAMILY='DejaVu Sans'
+        FONT_SIZE=11
+        cat "$PANEL_FIFO" | panel_dzen2 -f "$FONT_FAMILY" -s "$FONT_SIZE" | dzen2 -h $PANEL_HEIGHT -dock -ta l -title-name panel -fn "${FONT_FAMILY}:pixelsize=${FONT_SIZE}" -fg "$COLOR_FOREGROUND" -bg "$COLOR_BACKGROUND"
+        ;;
+esac
